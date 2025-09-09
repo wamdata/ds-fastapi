@@ -4,7 +4,10 @@ version = "0.0.1"
 description = "Enhanced FastAPI"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi>=0.116.1",
+    "pydantic>=2.11.7",
+]
 
 [build-system]
 requires = ["hatchling >= 1.14.1"]

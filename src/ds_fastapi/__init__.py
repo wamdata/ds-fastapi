@@ -1,3 +1,5 @@
-from .example import add_one
+from .EnhancedFastAPI import EnhancedFastAPI
 
-__all__ = ["add_one"]
+__all__ = [
+    "EnhancedFastAPI",
+]
