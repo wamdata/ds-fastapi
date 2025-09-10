@@ -29,12 +29,17 @@ app.add_middleware(
 )
 
 # Optional: a dependency with documented error responses
-def require_auth():
-    # ... validate auth here, or raise HTTPException(status_code=401) ...
-    return True
+class Auth:
+    def __call__(self):
+        # ... validate auth here, or raise HTTPException(status_code=401) ...
+        return True
+    
+    # Document dependency errors so EnhancedFastAPI can merge into OpenAPI
+    responses = {401: {"description": "Unauthorized"}}
 
-# Tell EnhancedFastAPI how to document dependency errors
-require_auth.responses = {401: {"description": "Unauthorized"}}
+
+require_auth = Auth()
+
 
 @app.get("/hello", dependencies=[Depends(require_auth)])
 def hello():
