@@ -12,6 +12,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",
+    "mypy>=1.17.1",
     "pytest>=8.4.2",
     "ruff>=0.12.12",
 ]
@@ -56,3 +57,11 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 docstring-code-format = true
+
+[tool.mypy]
+packages = "ds_fastapi"
+ignore_missing_imports = false
+explicit_package_bases = true
+check_untyped_defs = true
+strict_optional = true
+plugins = "pydantic.mypy"
