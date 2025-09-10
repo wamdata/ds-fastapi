@@ -98,8 +98,8 @@ class EnhancedFastAPI(FastAPI):
                     },
                     "required": ["message"],
                 },
-                "required": ["detail"],
             },
+            "required": ["detail"],
         }
 
         # Add 500 response to all operations
