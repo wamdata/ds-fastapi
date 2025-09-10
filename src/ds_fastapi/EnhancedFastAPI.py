@@ -2,11 +2,25 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.dependencies.models import Dependant
+from fastapi.logger import logger
 from fastapi.routing import APIRoute
 from pydantic import BaseModel
+from starlette.types import ASGIApp
+
+from .UncaughtExceptionMiddleware import UncaughtExceptionMiddleware
 
 
 class EnhancedFastAPI(FastAPI):
+    def build_middleware_stack(self) -> ASGIApp:
+        # This will add the UncaughtExceptionMiddleware to the end of the
+        # middleware stack just before the middleware stack is instantiated
+        # making it the outermost middleware
+        self.add_middleware(
+            UncaughtExceptionMiddleware, logger=logger, debug=self.debug
+        )
+
+        return super().build_middleware_stack()
+
     def _add_dependencies_responses_to_operations(self, openapi_schema: dict[str, Any]):
         """Add dependency responses to operations in the OpenAPI schema."""
 

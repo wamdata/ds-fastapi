@@ -15,18 +15,11 @@ uv add -U ds-fastapi
 ## Usage
 
 ```python
-import logging
 from fastapi import Depends
-from ds_fastapi import EnhancedFastAPI, UncaughtExceptionMiddleware
+from ds_fastapi import EnhancedFastAPI
 
+# when debug is True, tracebacks will be included in the error response
 app = EnhancedFastAPI(debug=True)
-
-# Add the middleware LAST so it can catch everything
-app.add_middleware(
-    UncaughtExceptionMiddleware,
-    logger=logging.getLogger("uvicorn.error"),
-    debug=app.debug,
-)
 
 # Optional: a dependency with documented error responses
 class Auth:
