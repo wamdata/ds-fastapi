@@ -76,16 +76,16 @@ def test_UncaughtExceptionMiddleware_is_included_and_works():
     assert r.status_code == 500
     data = r.json()
     assert (
-        data["error"]["message"]
+        data["detail"]["message"]
         == "Unknown Internal Server Error. Please contact support and provide them with the details of your request."
     )
-    assert "traceback" not in data["error"]
+    assert "traceback" not in data["detail"]
 
     r = client.get("/middleware-error")
     assert r.status_code == 500
     data = r.json()
     assert (
-        data["error"]["message"]
+        data["detail"]["message"]
         == "Unknown Internal Server Error. Please contact support and provide them with the details of your request."
     )
-    assert "traceback" not in data["error"]
+    assert "traceback" not in data["detail"]

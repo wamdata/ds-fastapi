@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.testclient import TestClient
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from ds_fastapi import UncaughtExceptionMiddleware
+from ds_fastapi.UncaughtExceptionMiddleware import UncaughtExceptionMiddleware
 
 
 class ErrorMiddleware(BaseHTTPMiddleware):
@@ -81,10 +81,10 @@ def test_middleware_catches_uncaught_exceptions_and_hides_traceback_by_default()
     assert r.status_code == 500
     data = r.json()
     assert (
-        data["error"]["message"]
+        data["detail"]["message"]
         == "Unknown Internal Server Error. Please contact support and provide them with the details of your request."
     )
-    assert "traceback" not in data["error"]
+    assert "traceback" not in data["detail"]
 
 
 def test_middleware_includes_traceback_when_debug_true():
@@ -94,8 +94,8 @@ def test_middleware_includes_traceback_when_debug_true():
     r = client.get("/boom")
     assert r.status_code == 500
     data = r.json()
-    assert data["error"]["message"] == "Boom!"
-    assert isinstance(data["error"].get("traceback"), list)
+    assert data["detail"]["message"] == "Boom!"
+    assert isinstance(data["detail"].get("traceback"), list)
 
 
 def test_middleware_catches_exceptions_from_other_middleware():
@@ -106,10 +106,10 @@ def test_middleware_catches_exceptions_from_other_middleware():
     assert r.status_code == 500
     data = r.json()
     assert (
-        data["error"]["message"]
+        data["detail"]["message"]
         == "Unknown Internal Server Error. Please contact support and provide them with the details of your request."
     )
-    assert "traceback" not in data["error"]
+    assert "traceback" not in data["detail"]
 
 
 def test_middleware_with_wrong_order_cannot_catch_exceptions():

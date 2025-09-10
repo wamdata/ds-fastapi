@@ -56,7 +56,7 @@ class UncaughtExceptionMiddleware:
             if self.logger is not None:
                 self.logger.error(f"Uncaught Exception: {err}")
 
-            error: dict[str, str | list[str]] = {
+            detail: dict[str, str | list[str]] = {
                 "message": (
                     "Unknown Internal Server Error. "
                     "Please contact support and provide them with "
@@ -65,8 +65,8 @@ class UncaughtExceptionMiddleware:
             }
 
             if self.debug:
-                error["message"] = str(err)
-                error["traceback"] = traceback.format_exception(err)
+                detail["message"] = str(err)
+                detail["traceback"] = traceback.format_exception(err)
 
-            response = JSONResponse(content={"error": error}, status_code=500)
+            response = JSONResponse(content={"detail": detail}, status_code=500)
             await response(scope, receive, send)
