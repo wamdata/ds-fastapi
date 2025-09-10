@@ -121,7 +121,7 @@ def test_middleware_with_wrong_order_cannot_catch_exceptions():
     try:
         client.get("/middleware-error")
         # If we get here, the exception wasn't raised (unexpected)
-        assert False, "Expected ValueError to be raised"
+        raise AssertionError("Expected ValueError to be raised")
     except ValueError as e:
         assert str(e) == "Middleware error!"
 
