@@ -98,6 +98,7 @@ class EnhancedFastAPI(FastAPI):
                     },
                     "required": ["message"],
                 },
+                "required": ["detail"],
             },
         }
 
