@@ -65,18 +65,21 @@ class EnhancedFastAPI(FastAPI):
         openapi_schema["components"]["schemas"]["InternalServerError"] = {
             "type": "object",
             "properties": {
-                "detail": {"type": "string"},
                 "message": {
                     "type": "string",
-                    "description": "Only included when DEBUG=True",
+                    "examples": [
+                        "Unknown Internal Server Error. "
+                        + "Please contact support and provide them with the "
+                        + "details of your request."
+                    ],
                 },
                 "traceback": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Only included when DEBUG=True",
+                    "description": "Only included when debug=True",
                 },
             },
-            "required": ["detail"],
+            "required": ["message"],
         }
 
         # Add 500 response to all operations
