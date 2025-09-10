@@ -55,3 +55,9 @@ uvicorn main:app --reload
 ```sh
 uv build
 ```
+
+## Test
+
+```sh
+uv run pytest
+```
