@@ -1,5 +1,6 @@
 import logging
 
+import pytest
 from fastapi import FastAPI, Request, Response
 from fastapi.testclient import TestClient
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -73,11 +74,15 @@ def create_app_with_wrong_middleware_order(debug: bool = False) -> FastAPI:
     return app
 
 
-def test_middleware_catches_uncaught_exceptions_and_hides_traceback_by_default():
+def test_middleware_catches_uncaught_exceptions_and_hides_traceback_by_default(
+    caplog: pytest.LogCaptureFixture,
+):
     app = create_app(debug=False)
     client = TestClient(app)
 
-    r = client.get("/boom")
+    with caplog.at_level(logging.ERROR):
+        r = client.get("/boom")
+
     assert r.status_code == 500
     data = r.json()
     assert (
@@ -85,6 +90,13 @@ def test_middleware_catches_uncaught_exceptions_and_hides_traceback_by_default()
         == "Unknown Internal Server Error. Please contact support and provide them with the details of your request."
     )
     assert "traceback" not in data["detail"]
+
+    for record in caplog.records:
+        assert record.levelname == "ERROR"
+        assert record.exc_info is not None
+        assert record.exc_text is not None
+        assert record.exc_text.startswith("Traceback (most recent call last):")
+        assert record.exc_text.endswith("RuntimeError: Boom!")
 
 
 def test_middleware_includes_traceback_when_debug_true():

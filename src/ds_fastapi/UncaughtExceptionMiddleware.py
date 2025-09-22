@@ -54,7 +54,7 @@ class UncaughtExceptionMiddleware:
             await self.app(scope, receive, send)
         except Exception as err:
             if self.logger is not None:
-                self.logger.error(f"Uncaught Exception: {err}")
+                self.logger.error(msg=f"Uncaught Exception: {err}", exc_info=True)
 
             detail: dict[str, str | list[str]] = {
                 "message": (
