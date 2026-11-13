@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 from fastapi.testclient import TestClient
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -66,6 +66,21 @@ def test_openapi_includes_dependency_responses_and_500_schema():
     boom_get = schema["paths"]["/boom"]["get"]
     assert "responses" in boom_get
     assert "500" in boom_get["responses"], "Generic 500 response missing"
+
+
+def test_openapi_includes_dependency_responses_for_included_router():
+    app = EnhancedFastAPI()
+    router = APIRouter()
+
+    @router.get("/items/{item_id}", dependencies=[Depends(_auth_dep)])
+    def get_item(item_id: str):
+        return {"id": item_id}
+
+    app.include_router(router, prefix="/api")
+    schema = app.openapi()
+    operation = schema["paths"]["/api/items/{item_id}"]["get"]
+    assert "401" in operation["responses"]
+    assert "500" in operation["responses"]
 
 
 def test_UncaughtExceptionMiddleware_is_included_and_works():

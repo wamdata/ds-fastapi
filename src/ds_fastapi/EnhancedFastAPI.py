@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.dependencies.models import Dependant
 from fastapi.logger import logger
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, iter_route_contexts
 from pydantic import BaseModel
 from starlette.types import ASGIApp
 
@@ -61,12 +61,21 @@ class EnhancedFastAPI(FastAPI):
             for sub_dep in dependency.dependencies:
                 add_dependency_responses(sub_dep, openapi_operation)
 
-        for route in self.routes:
-            if not isinstance(route, APIRoute):
+        for context in iter_route_contexts(self.routes):
+            if not isinstance(context.original_route, APIRoute):
                 continue
-            for method in route.methods:
-                openapi_operation = openapi_schema["paths"][route.path][method.lower()]
-                for dependency in route.dependant.dependencies:
+            path = context.path_format or context.path
+            if not path or path not in openapi_schema["paths"]:
+                continue
+            path_item = openapi_schema["paths"][path]
+            dependant = context.dependant
+            if dependant is None:
+                continue
+            for method in context.methods or ():
+                openapi_operation = path_item.get(method.lower())
+                if openapi_operation is None:
+                    continue
+                for dependency in dependant.dependencies:
                     add_dependency_responses(
                         dependency=dependency,
                         openapi_operation=openapi_operation,
